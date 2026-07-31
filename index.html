@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AuraPods - Santa Catarina</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+:root{--bg:#070f1f;--card:#111e36;--text:#e8f0ff;--muted:#8ca0c0;--accent:#8b5cf6;--accent2:#22d3ee}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:radial-gradient(800px 500px at 20% -10%, #1e293b, transparent),var(--bg);color:var(--text)}
+header{padding:20px;max-width:1100px;margin:auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
+.logo{font-weight:800;font-size:22px}.logo span{color:var(--accent2)}
+.card{background:rgba(17,30,54,.95);border:1px solid #1f2f4d;border-radius:18px;padding:18px;margin:12px 0}
+.grid{max-width:1100px;margin:auto;padding:0 18px;display:grid;grid-template-columns:1.2fr.8fr;gap:16px}
+@media(max-width:900px){.grid{grid-template-columns:1fr}}
+#map{height:420px;border-radius:14px;z-index:1}
+.badge{display:inline-block;padding:6px 12px;border-radius:999px;font-size:12px;font-weight:700}
+.ok{background:#16a34a22;color:#4ade80;border:1px solid #22c55e44}
+.warn{background:#f59e0b22;color:#fcd34d;border:1px solid #f59e0b44}
+.bad{background:#ef444422;color:#fca5a5;border:1px solid #ef444444}
+.kpi{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px}
+.kpi div{background:#0c1730;border-radius:12px;padding:12px;text-align:center;border:1px solid #1e2f50}
+.kpi b{font-size:20px;display:block}
+.btn{background:linear-gradient(90deg,var(--accent),var(--accent2));border:0;padding:12px 18px;border-radius:12px;color:#fff;font-weight:800;width:100%;cursor:pointer}
+.small{color:var(--muted);font-size:13px;line-height:1.5}
+</style>
+</head>
+<body>
+<header>
+<div class="logo">AuraPods <span>Santa Catarina</span></div>
+<div class="badge ok">● Sistema Activo - Nuevo León</div>
+</header>
+<div class="grid">
+<div>
+<div class="card">
+<h2 style="margin:0 0 6px">Calidad del Aire - Santa Catarina en Tiempo Real</h2>
+<p class="small">Red de nodos AuraPods desplegada en Santa Catarina, NL. Integración con SIMA y sensores distribuidos en zonas industriales y residenciales.</p>
+<div id="map"></div>
+<div class="kpi">
+<div><b>68</b><span class="small">AQI Promedio Moderado</span></div>
+<div><b>18 µg/m³</b><span class="small">PM2.5</span></div>
+<div><b>12</b><span class="small">Nodos Activos</span></div>
+</div>
+</div>
+<div class="card">
+<h3>📍 Puntos críticos</h3>
+<p class="small"><span class="badge bad">Alta</span> <b>Blvd. Díaz Ordaz / La Fama</b> - 94 AQI - Tráfico e industria</p>
+<p class="small"><span class="badge warn">Media</span> <b>Cumbres / Viaducto</b> - 71 AQI</p>
+<p class="small"><span class="badge ok">Buena</span> <b>La Huasteca</b> - 42 AQI - Zona limpia</p>
+</div>
+</div>
+<div>
+<div class="card">
+<h3>Impacto del Proyecto</h3>
+<p class="small">Santa Catarina presenta contaminación por PM2.5, PM10 y O3 por industria y tráfico de Monterrey-Saltillo.</p>
+<p class="small"><b>AuraPods</b> permite visualización hiperlocal para alertas tempranas y rutas escolares seguras.</p>
+<button class="btn" onclick="alert('Alerta enviada a Protección Civil Santa Catarina')">🔔 Enviar Alerta Ciudadana</button>
+<div style="margin-top:14px">
+<div class="small">Fuentes: SIMA Nuevo León, AirNow, OpenAQ, NASA FIRMS</div>
+</div>
+</div>
+<div class="card">
+<h3>Datos de Hoy</h3>
+<p class="small">Fecha: <span id="fecha"></span></p>
+<p class="small">Viento: 12 km/h ESE<br>Humedad: 54%<br>Temp: 31°C</p>
+<hr style="border:0;border-top:1px solid #1e2f50;margin:12px 0">
+<p class="small"><b>Recomendación:</b> Uso de cubrebocas en zonas industriales, evitar ejercicio 13:00-17:00 hrs.</p>
+</div>
+</div>
+</div>
+<script>
+document.getElementById('fecha').innerText = new Date().toLocaleDateString('es-MX',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+var map = L.map('map').setView([25.678, -100.458], 12);
+L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png').addTo(map);
+var points = [[25.676, -100.452, 'Díaz Ordaz / La Fama', 94],[25.688, -100.478, 'Centro Santa Catarina', 68],[25.642, -100.521, 'La Huasteca', 42],[25.705, -100.445, 'Cumbres / Viaducto', 71]];
+points.forEach(p=>{
+var color = p[3]>80?'#ef4444':p[3]>60?'#f59e0b':'#22c55e';
+L.circleMarker([p[0],p[1]],{radius:11,color:color,fillColor:color,fillOpacity:.7}).addTo(map).bindPopup('<b>'+p[2]+'</b><br>AQI: '+p[3]);
+});
+</script>
+</body>
+</html>
